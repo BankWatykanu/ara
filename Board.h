@@ -10,7 +10,7 @@ public:
 	int y;
 	char name;
 
-
+	void move();
 	/*~Board(){
  		printf("Umarlem\n");
 	}*/
@@ -41,8 +41,9 @@ public:
 	};
 	~Figure();
 
-};
 
+};
+/*==============================*/
 class Ghost: public Figure{
 public:
 	//name = "G";
@@ -51,4 +52,9 @@ public:
 		this->y = b;
 		//this->owner = player
 	};
+	void move(int ax, int ay){
+		this->x = ax;
+		this->y = ay;
+	};
 };
+
