@@ -10,7 +10,7 @@ public:
 	int y;
 	char name;
 
-	void move();
+	void move(int ax, int ay);
 	/*~Board(){
  		printf("Umarlem\n");
 	}*/
@@ -50,6 +50,7 @@ public:
 	Ghost(int a, int b/*, bool player*/){
 		this->x = a;
 		this->y = b;
+		this->name = 'G';
 		//this->owner = player
 	};
 	void move(int ax, int ay){

@@ -22,14 +22,20 @@ int main(){
     
     /*====================================*/
 
-    scanf("%d %d",rx, ry);
-    delete board[rx][ry];
-    board[rx][ry] = new Ghost(rx, ry);
-    int tab[2];
+    scanf("%d",&rx);
+    //printf("blablabla\n");
+    scanf("%d",&ry);
+    delete board[0][0];
+    board[0][0] = new Ghost(rx, ry);
+
+
+    printf("wypisyje %c\n", board[rx][ry]->name);
+    /*int tab[2];
     tab[0] = rx;
     tab[1] = ry;
-    scanf("%d %d",rx, ry);
-    board[tab[0]][tab[1]]->move(rx, ry);
+    scanf("%d",&rx);
+    scanf("%d",&ry);*/
+    //board[tab[0]][tab[1]]->move(rx, ry);
 
     /*===============[PRINT]===============*/
     
