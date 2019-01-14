@@ -26,6 +26,9 @@ class Figure : public Board{
 public:
 	bool owner;
 	char name;
+	void death(){
+		~Figure();
+	};
 };
 
 class Ghost: public Figure{

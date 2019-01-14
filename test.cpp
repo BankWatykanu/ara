@@ -3,7 +3,7 @@
 
 
 int main(){
-	Board *board[m][n];
+	Board *board[m][n];                                          //dwuwymiarowa tablica obiektow
     for(int i = 0; i < m; i++){
     	for (int j = 0; j < n; j++) board[i][j] = new Figure;
     }
