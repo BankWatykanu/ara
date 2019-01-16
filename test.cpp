@@ -1,7 +1,8 @@
 
 #include "Board.h"
+#include <cstdlib>
 int rx, ry;
-int main(){
+int main2(){
 	Board *board[m][n];                                          //dwuwymiarowa tablica obiektow
     for(int i = 0; i < m; i++){
     	for (int j = 0; j < n; j++) {
@@ -58,5 +59,52 @@ int main(){
     }
     
 	return 0;
+
+}
+int main(){
+  /*Board *board;
+  board = new Empty;
+  printf("%c\n",board->name);
+  //Board *wsk = board;
+  board->~Empty();
+
+  board = new Figure;
+
+  printf("%c\n",board->name);
+  printf("%c\n",board->x);
+ // printf("%c\n",wsk->name);
+  delete board;*/
+  //delete wsk;
+  
+  
+  Empty e, *empty;
+  Board b ,*board;
+  Figure f;
+  //board->hello();
+  //e.hello();
+ // board = &e;
+ //board->hello();
+ // empty = dynamic_cast < Empty *>( board );
+
+
+  //if(empty) printf("udalo sie\n");
+  //else      printf("nie udalo sie\n");
+
+
+  //board->hello();
+  //f.hello();
+  
+  //printf("%c\n", board->name);
+  e.hello();
+
+  board = dynamic_cast <Board *> (&e);
+  empty = dynamic_cast <Empty *> (&b);
+  board->hello();
+  empty->hello();
+  //board->hello();
+  
+  //delete board;
+  //delete empty;
+  return 0;
 
 }

@@ -8,12 +8,19 @@ class Board{
 public:
 	int x;
 	int y;
-	char name;
+	 char name;
 
 	void move(int ax, int ay);
 	/*~Board(){
  		printf("Umarlem\n");
 	}*/
+	Board() {this->name ='b';};
+	virtual ~Board(){
+		//printf("wybuchl obiek Board\n");
+	};
+	void hello(){
+		printf("Hej I'm %c\n",name );
+	};
 };
 class Empty: public Board{
 public:
@@ -38,8 +45,10 @@ public:
 	char name;
 	Figure(){	
 		this->name = 'F';
+		this->x = 15;
+		printf("Stworzylem figure\n");
 	};
-	~Figure();
+	//~Figure();
 
 
 };
