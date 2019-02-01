@@ -3,31 +3,31 @@
 bool click=0;
 
 #include <sstream>
-#include "figures.h"
-#include "header.h"
+#include "Figures.h"
+#include "Header.h"
 #include "fields.h"
 #include "mapRemoving.h"
 #include <math.h>
 #include "highlight.h"
+#include "AI.h"
+
+bool ai=0;
 
 
 
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(VIEW_HEIGHT, VIEW_HEIGHT), "A.R.A.");
     sf::View view(sf::Vector2f(0.0f,0.0f), sf::Vector2f(VIEW_HEIGHT, VIEW_HEIGHT));
     window.setMouseCursorVisible(false);
     sf::Clock minutes;
     sf::Clock seconds;
     sf::Music music;
-
-    if (!music.openFromFile("sounds/music.wav"))ms_error(24, "nie zaladowano music.wav");
+    if (!music.openFromFile("sounds\\music.wav"))ms_error(24, "nie zaladowano music.wav");
     music.setVolume(20.f);
-
     music.play();
     sf::SoundBuffer buffer;
-    if (!buffer.loadFromFile("sounds/sound.wav"))
+    if (!buffer.loadFromFile("sounds\\sound.wav"))
         ms_error(22, "nie zaladowano dzwieku");
     sf::Sound sound;
     sound.setBuffer(buffer);
@@ -38,7 +38,7 @@ int main()
     {
         ms_error(26, "no kursor found", 1);
     }
-    sf::Sprite Kursor;
+
     Kursor.setTexture(kursor);
     Kursor.setScale(0.1f, 0.1f);
 
@@ -52,7 +52,7 @@ int main()
     sf::Texture Background;
     if (!Background.loadFromFile("img/dupa.png"))
     {
-        ms_error(54, "nie zaladowano img/dupa.png pola");
+
     }
     sf::Font font;
     if (!font.loadFromFile("fonts/arial.ttf"))
@@ -220,7 +220,7 @@ int main()
                 {
                     if(pow(mouse_position.x - 20 - background_fields[i][j].getPosition().x, 2) + pow(mouse_position.y - 20 - background_fields[i][j].getPosition().y, 2) < 400)
                     {
-                        if(!click)background_fields[i][j].setColor(sf::Color(255, 255, 255, 255));
+                        if(!click)background_fields[i][j].setColor(sf::Color::Magenta);
                         else{
 
                             if(front_fields[i*34+j].owner==opponentOwner&&canAttack(front_fields,figure_x,figure_y, i, j)){
@@ -247,7 +247,7 @@ int main()
 
                     }else if(!click){
                         sf::Color a= background_fields[i][j].getColor();
-                        if(a!=sf::Color::Cyan)background_fields[i][j].setColor(sf::Color(200, 200, 200));
+                        if(a!=sf::Color::Cyan)background_fields[i][j].setColor(sf::Color::White);
 
 
 
@@ -295,76 +295,122 @@ int main()
                     }
                 }
             }
-            else if((actual_mode == "play") && mouse_pressed)
+            else if((actual_mode == "play") && (mouse_pressed||(ai&&tura==1)))
             {
-                if((figure_x == 0) && (figure_y == 0))
-                {
-                    for(int i = 0; i < 17; i ++)
+                if(!ai||tura==2){
+                    if((figure_x == 0) && (figure_y == 0))
                     {
-                        for(int j = 0; j < 34; j ++)
+                        for(int i = 0; i < 17; i ++)
                         {
-                            if(pow(mouse_position.x - 20 - background_fields[i][j].getPosition().x, 2) + pow(mouse_position.y - 20 - background_fields[i][j].getPosition().y, 2) < 400)
+                            for(int j = 0; j < 34; j ++)
                             {
-                                figure_x = i;
-                                figure_y = j;
-                                if((front_fields[figure_x * 34 + figure_y].name == "empty"))
+                                if(pow(mouse_position.x - 20 - background_fields[i][j].getPosition().x, 2) + pow(mouse_position.y - 20 - background_fields[i][j].getPosition().y, 2) < 400)
                                 {
+                                    figure_x = i;
+                                    figure_y = j;
+                                    if((front_fields[figure_x * 34 + figure_y].name == "empty"))
+                                    {
+                                        figure_x = 0;
+                                        figure_y = 0;
+                                    }else if(front_fields[figure_x*34+figure_y].owner==tura){
+                                        click=1;
+
+                                        mouse_position = sf::Mouse::getPosition(window);
+                                        if(front_fields[figure_x*34+figure_y].owner==2)opponentOwner=1;
+                                        else if(front_fields[figure_x*34+figure_y].owner==1)opponentOwner=2;
+                                        //======================================================[highLight]================================
+                                        if(!highlight(figure_x, figure_y))ms_error(279, "cos poszlo nie tak z highlightem");
+                                        //========================================highlight=========================================================
+                                    }
+                                    else{
+                                        figure_x=0;
+                                        figure_y=0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for(int i = 0; i < 17; i ++)
+                        {
+                            for(int j = 0; j < 34; j ++)
+                            {
+                                if(pow(mouse_position.x - 20 - background_fields[i][j].getPosition().x, 2) + pow(mouse_position.y - 20 - background_fields[i][j].getPosition().y, 2) < 400)
+                                {
+                                    target_x = i;
+                                    target_y = j;
+                                    if(front_fields[34*figure_x+figure_y].owner == tura)
+                                    {
+                                        if(Action(front_fields, figure_x, figure_y, target_x, target_y))
+                                        {
+                                            if(tura == 1) tura = 2;
+                                            else tura = 1;
+                                            nrTura++;
+                                            sound.play();
+                                            click=0;
+
+                                            front_fields[target_x*34+target_y].setTexture(*front_fields[figure_x*34+figure_y].getTexture());
+                                            front_fields[figure_x*34+figure_y].setTexture(texture_nothing);
+
+                                            window.draw(front_fields[target_x*34+target_y]);
+                                            window.draw(front_fields[figure_x*34+figure_y]);
+                                            for(int i = 0; i < 17; i++){
+
+                                                for (int j = 0; j< 34; j++){
+                                                    frontFields();
+                                                    window.draw(front_fields[i*34+j]);
+                                                    window.draw(front_fields[i*34+j]);
+
+                                                    if((front_fields[i * board_size_y + j].name != "empty"))
+                                                    {
+                                                        if(front_fields[i * board_size_y + j].owner == 1)
+                                                        {
+                                                            background_fields[i][j].setColor(sf::Color::Yellow);
+                                                        }
+                                                        else
+                                                        {
+                                                            background_fields[i][j].setColor(sf::Color::Blue);
+                                                        }
+
+                                                    }else{
+                                                        sf::Color a= background_fields[i][j].getColor();
+                                                        if(a!=sf::Color::Cyan)background_fields[i][j].setColor(sf::Color::White);
+                                                    }
+
+
+
+                                                }
+                                            }
+
+                                        }
+                                        if (!kursor.loadFromFile("img/kursor.png"))
+                                        {
+                                            ms_error(26, "no kursor found", 1);
+                                        }
+                                    }
+                                    else ms_message("to nie twoja tura dzbanie");
                                     figure_x = 0;
                                     figure_y = 0;
-                                }else if(front_fields[figure_x*34+figure_y].owner==tura){
-                                    click=1;
-
-                                    mouse_position = sf::Mouse::getPosition(window);
-                                    (front_fields[figure_x* 34 + figure_y].owner == 1)?opponentOwner = 2:opponentOwner = 1;
-                                    //======================================================[highLight]================================
-                                    if(!highlight(figure_x, figure_y))ms_error(279, "cos poszlo nie tak z highlightem");
-                                    //========================================highlight=========================================================
-                                }
-                                else{
-                                    figure_x=0;
-                                    figure_y=0;
                                 }
                             }
                         }
                     }
-                }
-                else
-                {
-                    for(int i = 0; i < 17; i ++)
-                    {
-                        for(int j = 0; j < 34; j ++)
-                        {
-                            if(pow(mouse_position.x - 20 - background_fields[i][j].getPosition().x, 2) + pow(mouse_position.y - 20 - background_fields[i][j].getPosition().y, 2) < 400)
-                            {
-                                target_x = i;
-                                target_y = j;
-                                if(front_fields[34*figure_x+figure_y].owner == tura)
-                                {
-                                    if(action(front_fields, figure_x, figure_y, target_x, target_y))
-                                    {
-                                        if(tura == 1) tura = 2;
-                                        else tura = 1;
-                                        nrTura++;
-                                        sound.play();
-                                        click=0;
-
-                                    }
-                                    if (!kursor.loadFromFile("img/kursor.png"))
-                                    {
-                                        ms_error(26, "no kursor found", 1);
-                                    }
-                                }
-                                else ms_message("to nie twoja tura dzbanie");
-                                figure_x = 0;
-                                figure_y = 0;
-                            }
-                        }
-                    }
+                }else if(!win){
+                    if(!AI(front_fields));
+                    std::cout<<"doszlem\n";
+                    if(!Action(front_fields, aiFX, aiFY, aiTX, aiTY));
+                    mouse_pressed=0;
+                    if(tura == 1) tura = 2;
+                    else tura = 1;
+                    nrTura++;
+                    sound.play();
+                    click=0;
                 }
             }
         }
 
-        //=======================Plansza menu==========================//
+//=======================Plansza menu==========================//
 
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
 
@@ -376,13 +422,10 @@ int main()
             }else if(mouse_position.x>=250&mouse_position.x<=500&&mouse_position.y>320&&mouse_position.y<380){  //działa tylko z execa (wraca do menu){
                 window.close();
                 music.stop();
-                system("./araMenu/sfml-app.o");  //działa tylko z execa (wraca do menu
-                return 0;
+                system("ara.exe");  //działa tylko z execa (wraca do menu
             }else if(mouse_position.x>=250&mouse_position.x<=500&&mouse_position.y>430&&mouse_position.y<490){
                 music.stop();
-
                 window.close();
-                return 0;
 
 
 
@@ -509,7 +552,7 @@ int main()
                 if(sf::Mouse::isButtonPressed(sf::Mouse::Left)||sf::Mouse::isButtonPressed(sf::Mouse::Right)){
                     music.stop();
                     window.close();
-                    system("./araMenu/sfml-app.o");  //działa tylko z execa (wraca do menu)
+                    system("ara.exe");  //działa tylko z execa (wraca do menu)
                 }
         }
 

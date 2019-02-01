@@ -1,9 +1,10 @@
     #include <math.h>
-    //#include <windows.h>
+    #include <windows.h>
 
     #define board_size_y 34
     #define coIleTurMaSieZapadac 5
 
+    sf::Texture Background;
     sf::Texture texture_pawn;
     sf::Texture texture_ghost;
     sf::Texture texture_cav;
@@ -26,12 +27,6 @@
 
     //HWND hWnd = GetConsoleWindow();
 
-    //----------[super zmienne]---------------
-        std::string empty = "empty";
-
-
-    //----------------------------------------
-
     int figure_x = 0;
     int figure_y = 0;
     int target_x = 0;
@@ -53,77 +48,20 @@
     bool isSaving=0;
     int opponentOwner;
 
+    //======do AI========\\
+
+    int aiFX;
+    int aiFY;
+    int aiTX;
+    int aiTY;
+
+    //==================\\
+
+    sf::RenderWindow window(sf::VideoMode(VIEW_HEIGHT, VIEW_HEIGHT), "A.R.A.");
+    sf::Sprite Kursor;
 
 
-void loadTexture(){
 
-
-    //wczytuje teksturki pionkow
-        if (!texture_pawn.loadFromFile("img/pawn.png"))
-        {
-            ms_error(666, "Header.h", 1);
-            system("PAUSE");
-        }
-        if (!texture_ghost.loadFromFile("img/ghost.png"))
-        {
-            ms_error(666, "Header.h", 1);
-            system("PAUSE");
-        }
-        if (!texture_cav.loadFromFile("img/cav.png"))
-        {
-            ms_error(666, "Header.h", 1);
-            system("PAUSE");
-        }
-        if (!texture_king.loadFromFile("img/king.png"))
-        {
-            ms_error(666, "Header.h", 1);
-            system("PAUSE");
-        }
-        if (!texture_tower.loadFromFile("img/tower.png"))
-        {
-            ms_error(666, "Header.h", 1);
-            system("PAUSE");
-        }
-        if (!texture_charge.loadFromFile("img/charge.png"))
-        {
-            ms_error(666, "Header.h", 1);
-            system("PAUSE");
-        }
-        if (!texture_mystery.loadFromFile("img/mystery.png"))
-        {
-            ms_error(666, "Header.h", 1);
-            system("PAUSE");
-        }
-        if (!texture_notexist.loadFromFile("img/notexist.png"))
-        {
-            ms_error(666, "Header.h", 1);
-            system("PAUSE");
-        }
-        if (!texture_nothing.loadFromFile("img/nothing.png"))
-        {
-            ms_error(666, "Header.h", 1);
-            system("PAUSE");
-        }
-
-            if (!menu.loadFromFile("img/menu.png"))
-            {
-                ms_error(106, "nie zaladowano menu.png", true);
-            }
-
-            Menu.setTexture(menu);
-            Menu.setPosition(sf::Vector2f(0, 0));
-            Menu.setScale(sf::Vector2f(1, 1));
-
-            if (!save.loadFromFile("img/save.png"))
-            {
-                ms_error(114, "nie zaladowano save.png", true);
-            }
-
-            Save.setTexture(save);
-            Save.setPosition(sf::Vector2f(0, 0));
-            Save.setScale(sf::Vector2f(1, 1));
-
-}
 void ResizeView(const sf::RenderWindow& window, sf::View& view)
 {
     float aspectRatio = float(window.getSize().x/ float(window.getSize().y));
